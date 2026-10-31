@@ -1,0 +1,4 @@
+/setup/ios.mobileconfig
+  Content-Disposition: attachment; filename="sagi-blocker.mobileconfig"
+  Content-Type: application/x-apple-aspen-config; charset=utf-8
+  Cache-Control: no-cache

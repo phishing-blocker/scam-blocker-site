@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadDisplayName</key>
+    <string>詐欺防止アプリ DNS保護</string>
+    <key>PayloadDescription</key>
+    <string>危険サイト・フィッシング詐欺からiPhoneを守るDNS over HTTPS設定です。</string>
+    <key>PayloadOrganization</key>
+    <string>株式会社RE-X</string>
+    <key>PayloadIdentifier</key>
+    <string>info.re-x.phishing-blocker.dns</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>F2D1F5B4-84E3-4E86-9A1D-3C842B102026</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.dnsSettings.managed</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>PayloadIdentifier</key>
+            <string>info.re-x.phishing-blocker.dns.doh</string>
+            <key>PayloadUUID</key>
+            <string>98D4A2F1-5C28-4BF2-A23C-091A8E2B2026</string>
+            <key>PayloadDisplayName</key>
+            <string>詐欺防止アプリ DoH</string>
+            <key>DNSSettings</key>
+            <dict>
+                <key>DNSProtocol</key>
+                <string>HTTPS</string>
+                <key>ServerURL</key>
+                <string>https://scam-blocker.re-x.info/dns-query</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

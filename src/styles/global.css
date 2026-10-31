@@ -51,6 +51,10 @@ li { margin: 6px 0; }
 .answer .card-title { color: var(--guard); }
 .warn { background: var(--warn-bg); color: var(--warn-text); border-radius: 12px; padding: 16px 20px; margin: 24px 0; }
 .warn p { color: var(--warn-text); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin: 24px 0; }
+.panel h2 { margin: 0 0 8px; padding-top: 0; border-top: none; }
+.btn { display: inline-block; background: var(--guard); color: #fff; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700; }
+.btn:hover { background: var(--ink); }
 .site-footer { border-top: 1px solid var(--line); background: var(--guard-soft); }
 .site-footer-inner { padding-top: 24px; padding-bottom: 24px; color: var(--muted); font-size: 0.9rem; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
