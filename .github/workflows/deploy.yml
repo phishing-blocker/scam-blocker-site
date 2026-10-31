@@ -32,6 +32,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+
       - name: Install wrangler
         run: npm install -g wrangler@3
 
@@ -41,8 +46,8 @@ jobs:
           wrangler pages project create "$PAGES_PROJECT" --production-branch=main \
             || echo "project already exists (or create failed); continue to deploy"
 
-      - name: Deploy public/ to Cloudflare Pages
-        run: wrangler pages deploy public --project-name="$PAGES_PROJECT" --branch=main
+      - name: Deploy dist/ to Cloudflare Pages
+        run: wrangler pages deploy dist --project-name="$PAGES_PROJECT" --branch=main
 
       # カスタムドメインの割り当て。ゾーンが同じアカウントにあれば、
       # Pages 側へドメインを足し、CNAME（scam-blocker -> <project>.pages.dev）を用意する。
