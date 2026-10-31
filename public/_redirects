@@ -1,2 +1,4 @@
 /after-call /help/after-call/ 301
 /after-call/ /help/after-call/ 301
+/welfare/activate /api/welfare/activate 302
+/welfare/activate/ /api/welfare/activate 302
