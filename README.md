@@ -21,4 +21,13 @@
 
 Cloudflare Pages のプロジェクト `scam-blocker-site` に `public/` を配信し、カスタムドメイン `scam-blocker.re-x.info` を割り当てます。
 
-デプロイには Cloudflare の資格情報（`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`）が要ります。値はリポジトリに書きません。
+デプロイは GitHub Actions（`.github/workflows/deploy.yml`、main への push と手動実行）で行います。プロジェクト作成、`public/` の配信、カスタムドメイン `scam-blocker.re-x.info` の割り当て（Pages へのドメイン追加と CNAME）までワークフローに含めています。
+
+資格情報は GitHub シークレットで渡します。値はリポジトリに書きません。
+
+| シークレット名 | 中身 |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API トークン（Account: Cloudflare Pages = Edit、Zone `re-x.info`: DNS = Edit / Zone = Read） |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare アカウント ID |
+
+未登録の間はデプロイのステップが失敗します（資格情報の登録待ち）。
