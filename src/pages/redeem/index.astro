@@ -1,0 +1,252 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+<Base title="福利厚生のコードを引き換える｜おるで" description="福利厚生サービスで受け取ったコードを確認し、おるでのアプリで引き換えます。" path="/redeem">
+<meta slot="head" name="robots" content="noindex, nofollow">
+<main><div class="wrap section">
+  <p class="redeem-tag">福利厚生のコード</p>
+  <div id="redeem-root" aria-live="polite"></div>
+  <noscript><p class="warn">このページはJavaScriptを使います。設定でJavaScriptを有効にしてから、もう一度開いてください。</p></noscript>
+</div></main>
+</Base>
+
+<style is:global>
+  .redeem-tag { display: inline-block; background: var(--guard-soft); color: var(--guard); font-weight: 700; padding: 2px 12px; border-radius: 6px; margin: 0; }
+  #redeem-root > div { margin-top: 16px; }
+  .rd-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 20px; margin-top: 24px; }
+  .rd-busy { display: flex; align-items: center; gap: 16px; }
+  .rd-spinner { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 4px solid var(--guard-soft); border-top-color: var(--guard); animation: rd-spin 1s linear infinite; }
+  @keyframes rd-spin { to { transform: rotate(360deg); } }
+  .rd-label { display: block; font-weight: 700; font-size: 1.1rem; }
+  .rd-input { display: block; width: 100%; margin-top: 8px; padding: 12px 16px; font: inherit; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 1.1rem; letter-spacing: 0.06em; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 12px; }
+  .rd-input:focus-visible { outline: 3px solid var(--warn-text); outline-offset: 2px; }
+  .rd-help { color: var(--muted); font-size: 0.9rem; }
+  .rd-notice { margin-top: 16px; padding: 8px 12px; border-left: 4px solid var(--warn-text); background: var(--warn-bg); color: var(--warn-text); border-radius: 4px; }
+  .rd-btn { display: block; width: 100%; margin-top: 24px; padding: 14px 20px; border: 0; border-radius: 12px; background: var(--guard); color: #fff; font: inherit; font-size: 1.1rem; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; }
+  .rd-btn:hover { background: var(--ink); }
+  .rd-btn-2 { display: inline-block; width: auto; margin-top: 12px; padding: 10px 20px; background: var(--surface); color: var(--guard); border: 2px solid var(--guard); }
+  .rd-btn-2:hover { background: var(--guard-soft); color: var(--guard); }
+  .rd-btn:focus-visible, .rd-link:focus-visible { outline: 3px solid var(--warn-text); outline-offset: 2px; }
+  .rd-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--guard); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer; }
+  .rd-wait { margin-top: 24px; padding: 14px 20px; border: 2px dashed var(--warn-text); border-radius: 12px; background: var(--surface); color: var(--muted); font-size: 1.1rem; font-weight: 700; text-align: center; }
+  .rd-alert { margin-top: 24px; padding: 20px; border: 2px solid var(--warn-text); border-radius: 12px; background: var(--warn-bg); color: var(--ink); }
+  .rd-alert .rd-big { margin: 0; font-size: 1.1rem; font-weight: 700; }
+  .rd-code { word-break: break-all; margin-top: 12px; padding: 8px 12px; background: var(--guard-soft); border-radius: 6px; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 1.1rem; }
+</style>
+
+<script>
+  import { PLAY_STORE_URL, STORE_PUBLISHED, SUPPORT_MAIL } from "../../lib/site";
+  import { checkCode, formatCode } from "../../lib/redeem";
+
+  // Android パッケージ名・スキーム（mobile/app.json と同じ。スキームは予備の入口）
+  const PACKAGE_ID = "info.re_x.scam_blocker";
+  const APP_SCHEME = "orude";
+
+  type Platform = "android" | "ios" | "other";
+
+  const root = document.getElementById("redeem-root") as HTMLElement;
+  let platform: Platform = "other";
+
+  function detectPlatform(): Platform {
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
+    if (/Android/i.test(ua)) return "android";
+    return "other";
+  }
+
+  // URL からコードを消す（履歴・共有に残さない）
+  function clearUrl() {
+    try {
+      window.history.replaceState(null, "", window.location.pathname);
+    } catch {
+      /* 何もしない */
+    }
+  }
+
+  type Child = Node | string | null;
+  function h(tag: string, attrs: Record<string, string> = {}, ...children: Child[]): HTMLElement {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    for (const c of children) if (c !== null) el.append(c);
+    return el;
+  }
+  const strong = (t: string) => h("strong", {}, t);
+
+  function show(...nodes: Node[]) {
+    const wrap = h("div", {}, ...nodes);
+    root.replaceChildren(wrap);
+  }
+
+  async function run(raw: string) {
+    const code = formatCode(raw);
+    if (!code) {
+      // 形が違うものは送らない（試行回数にも数えられない）
+      clearUrl();
+      showInput(raw, "コードは 12 文字です（例 ABCD-EFGH-JKLM）。数字の 0 と 1、英字の O と I は使われません。もう一度ご確認ください。");
+      return;
+    }
+    showBusy();
+    const r = await checkCode(code);
+    clearUrl();
+    if (r.ok) showValid(code, r.campaignName, r.grantDays);
+    else showFailed(code, r.status, r.message, r.retryAfter);
+  }
+
+  function showBusy() {
+    root.setAttribute("aria-busy", "true");
+    show(
+      h("h1", {}, "確認しています"),
+      h("div", { class: "rd-card rd-busy", role: "status" },
+        h("span", { class: "rd-spinner", "aria-hidden": "true" }),
+        h("p", {}, "コードを確認しています。このまま、画面を閉じずにお待ちください。"),
+      ),
+    );
+  }
+
+  function showInput(initial = "", notice?: string) {
+    root.removeAttribute("aria-busy");
+    const input = h("input", {
+      id: "code", name: "code", type: "text", inputmode: "text", autocomplete: "off",
+      autocapitalize: "characters", spellcheck: "false", placeholder: "ABCD-EFGH-JKLM",
+      "aria-describedby": "code-help", class: "rd-input",
+    }) as HTMLInputElement;
+    input.value = initial;
+    const form = h("form", { class: "rd-card" },
+      h("label", { for: "code", class: "rd-label" }, "コード"),
+      input,
+      h("p", { id: "code-help", class: "rd-help" }, "全角でも、小文字でも、ハイフンがなくても入力できます。"),
+      notice ? h("p", { role: "alert", class: "rd-notice" }, notice) : null,
+      h("button", { type: "submit", class: "rd-btn" }, "コードを確認する"),
+    );
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      void run(input.value);
+    });
+    show(
+      h("h1", {}, "コードを入力してください"),
+      h("p", {}, "福利厚生サービスで受け取ったコードを入力します。この画面で確認しても、まだ引き換わりません。"),
+      form,
+    );
+  }
+
+  function resetLink(prefix: string, suffix: string): HTMLElement {
+    const b = h("button", { type: "button", class: "rd-link" }, "コードを入れ直してください");
+    b.addEventListener("click", () => showInput());
+    return h("p", {}, prefix, b, suffix);
+  }
+
+  function codeBox(code: string): HTMLElement {
+    const btn = h("button", { type: "button", class: "rd-btn rd-btn-2" }, "コードをコピーする");
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = "コピーしました";
+      } catch {
+        btn.textContent = "コードをコピーする";
+      }
+    });
+    return h("section", { "aria-label": "コード", class: "rd-card" },
+      h("p", {}, "アプリに入力するときは、このコードをコピーして貼り付けてください。"),
+      h("p", { class: "rd-code" }, code),
+      btn,
+    );
+  }
+
+  function openApp(code: string): HTMLElement {
+    if (!STORE_PUBLISHED) {
+      return h("div", {},
+        h("div", { role: "status", class: "rd-wait" }, "準備中です（公開までお待ちください）"),
+        h("p", {}, "アプリはまだストアに出ていません。公開されたら、", strong("このページをもう一度開いて"), "ください。コードは下でコピーして控えられます。"),
+      );
+    }
+    // https の App Link を、アプリを指定して開く。アプリがなければ Google Play へ移る。
+    // （ページ自身と同じアドレスへの普通のリンクは、Chrome がアプリに渡さないため intent 形式にする）
+    const host = window.location.host;
+    const path = `/redeem?code=${encodeURIComponent(code)}`;
+    const fallback = encodeURIComponent(PLAY_STORE_URL);
+    const intent = `intent://${host}${path}#Intent;scheme=https;package=${PACKAGE_ID};S.browser_fallback_url=${fallback};end`;
+    return h("div", {},
+      h("a", { href: intent, class: "rd-btn" }, "アプリで引き換える"),
+      h("p", {}, "アプリが入っていないときは、Google Play が開きます。"),
+      h("p", {}, h("a", { href: `${APP_SCHEME}://redeem?code=${encodeURIComponent(code)}`, class: "rd-link" }, "うまく開かないときは、こちらからアプリを開く")),
+    );
+  }
+
+  function showValid(code: string, campaignName: string, grantDays: number) {
+    root.removeAttribute("aria-busy");
+    const guide =
+      platform === "android"
+        ? openApp(code)
+        : h("div", { class: "rd-alert" },
+            h("p", { class: "rd-big" }, "Android のスマートフォンでこのページを開いてください"),
+            h("p", {}, platform === "ios"
+              ? "iPhone 向けのアプリは準備中です。いまは Android のスマートフォンでご利用になれます。"
+              : "おるでのアプリは Android のスマートフォンで使えます。パソコンでは引き換えられません。"),
+            h("p", {}, "Android のスマートフォンで、福利厚生サービスのリンクをもう一度開くか、このページを開いてコードを入力してください。"),
+          );
+    show(
+      h("h1", {}, `このコードで ${grantDays} 日間、おるでを使えます`),
+      h("p", {}, "提供元：", strong(campaignName)),
+      h("p", {}, `コードは確認できました。まだ引き換わっていません。アプリで引き換えると、${grantDays} 日間が始まります。`),
+      h("div", { style: "margin-top:24px" }, guide),
+      codeBox(code),
+      resetLink("別のコードを使うときは、", "。"),
+    );
+  }
+
+  function nextStep(status: number): { text: string; retry: boolean; reenter: boolean } {
+    switch (status) {
+      case 400:
+      case 404:
+        return { text: "コードの文字をご確認ください。0 と O、1 と I は使われません。受け取った画面を見ながら、もう一度入力してください。", retry: false, reenter: true };
+      case 409:
+      case 410:
+        return { text: "こちらでは直せません。コードを受け取った福利厚生サービスの問い合わせ窓口へ、このメッセージを伝えてください。", retry: false, reenter: true };
+      case 429:
+        return { text: "時間をおいてから、もう一度確認してください。", retry: true, reenter: false };
+      default:
+        // 503・通信エラーなど
+        return { text: "時間をおいて、もう一度確認してください。何度も続くときは、コードを受け取った福利厚生サービスの問い合わせ窓口へご連絡ください。", retry: true, reenter: false };
+    }
+  }
+
+  function showFailed(code: string, status: number, message: string, retryAfter?: number) {
+    root.removeAttribute("aria-busy");
+    const step = nextStep(status);
+    const wait = status === 429 && retryAfter ? `（目安は約 ${Math.ceil(retryAfter / 60)} 分後です）` : "";
+    const actions = h("div", { style: "margin-top:24px" });
+    if (step.retry) {
+      const retry = h("button", { type: "button", class: "rd-btn", style: "margin-top:0" }, "もう一度確認する");
+      retry.addEventListener("click", () => void run(code));
+      actions.append(retry, resetLink("別のコードのときは、", "。"));
+      actions.lastElementChild!.setAttribute("style", "margin-top:16px");
+    } else {
+      const reset = h("button", {
+        type: "button",
+        class: step.reenter && status < 409 ? "rd-btn" : "rd-btn rd-btn-2",
+        style: "margin-top:0",
+      }, "コードを入れ直す");
+      reset.addEventListener("click", () => showInput());
+      actions.append(reset);
+    }
+    show(
+      h("h1", {}, "コードを確認できませんでした"),
+      h("div", { role: "alert", class: "rd-alert" },
+        h("p", { class: "rd-big" }, message),
+        h("p", { style: "margin-top:12px" }, step.text + wait),
+      ),
+      actions,
+      h("p", { style: "margin-top:24px" },
+        "おるでへのお問い合わせは ",
+        h("a", { href: `mailto:${SUPPORT_MAIL}`, class: "rd-link" }, SUPPORT_MAIL),
+        " へ。コードそのものは書かないでください。"),
+    );
+  }
+
+  // 初期表示（確認中の表示）のあと、URL と UA を読む
+  showBusy();
+  platform = detectPlatform();
+  const raw = new URLSearchParams(window.location.search).get("code");
+  if (raw && raw.trim()) void run(raw);
+  else showInput();
+</script>
