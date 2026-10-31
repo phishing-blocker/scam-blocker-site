@@ -1,0 +1,28 @@
+---
+import Base from "../../../layouts/Base.astro";
+---
+<Base title="iPhoneでのDNS設定｜おるで" description="iPhoneにDNS保護のプロファイルを入れて、危険なサイトへの接続を止める設定方法を案内します。" path="/setup/ios/">
+<main><div class="wrap section">
+  <h1>iPhoneでのネット保護（DNS設定）</h1><hr class="hero-rule">
+  <p class="lead">プロファイルを入れると、Safari や各種アプリが危険なサイトへつなごうとしたとき、おるでがその接続を止めます。</p>
+
+  <div class="panel">
+    <h2>手順 1　プロファイルをダウンロード</h2>
+    <p>下のボタンを押して、プロファイルのダウンロードを許可してください。</p>
+    <p><a class="btn" href="/setup/ios.mobileconfig">DNS保護プロファイルをダウンロード</a></p>
+  </div>
+
+  <h2>手順 2　iPhone の設定で有効にする</h2>
+  <ol>
+    <li>iPhone の「<strong>設定</strong>」アプリを開きます。</li>
+    <li>画面上部に出る「<strong>プロファイルがダウンロードされました</strong>」をタップします。</li>
+    <li>右上の「<strong>インストール</strong>」をタップし、パスコードを入力して終わります。</li>
+  </ol>
+
+  <h2>送られる情報について</h2>
+  <p>この設定をすると、つなごうとしたサイトのドメイン名が当社のサーバーに届き、止めるかどうかの判定に使われます。ドメイン名と端末を結びつけて保存はしません。くわしくは<a href="/privacy">プライバシーポリシー</a>をご覧ください。</p>
+
+  <h2>設定をやめるには</h2>
+  <p>止めたいときは、いつでも iPhone の「設定」＞「一般」＞「VPNとデバイス管理」から「詐欺防止アプリ DNS保護」を選んで削除できます。</p>
+</div></main>
+</Base>
