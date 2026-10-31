@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "info.re_x.scam_blocker",
+      "sha256_cert_fingerprints": [
+        "A1:B6:12:3E:B2:37:13:40:83:CB:DA:DC:EE:FB:EE:B9:A4:B7:01:6D:06:DE:82:58:40:1D:D3:8A:26:8A:A5:F7"
+      ]
+    }
+  }
+]
