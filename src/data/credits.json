@@ -1,0 +1,17 @@
+[
+  {
+    "source": "hagezi-tif",
+    "license": "GPL-3.0（一部入力に CC BY-SA を含む。表示・継承はクレジット参照）",
+    "credit": "hagezi DNS Blocklists (GPL-3.0 / 一部 CC BY-SA)"
+  },
+  {
+    "source": "cyberhost",
+    "license": "CC BY-SA 4.0",
+    "credit": "CyberHostUK/hostfile (CC BY-SA 4.0)"
+  },
+  {
+    "source": "metamask",
+    "license": "DBAD (Don't Be a Dick)",
+    "credit": "MetaMask eth-phishing-detect (DBAD)"
+  }
+]

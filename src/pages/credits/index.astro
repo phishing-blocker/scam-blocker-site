@@ -1,0 +1,17 @@
+---
+import Base from "../../layouts/Base.astro";
+// 生成物。analytics の取り込み登録簿の credits() をそのまま保存したもの（scripts/export-credits.py）
+import credits from "../../data/credits.json";
+---
+<Base title="データ提供元・ライセンス｜おるで" description="おるでが危険なサイトの判定に使っているデータの提供元と、そのライセンスの表示です。" path="/credits/">
+<main><div class="wrap section">
+  <h1>データ提供元・ライセンス</h1><hr class="hero-rule">
+  <p class="lead">おるでが危険なサイトの判定に使っているデータの、提供元とライセンスです。</p>
+
+  <ul>
+    {credits.map((c) => <li>{c.credit}</li>)}
+  </ul>
+
+  <p><a href="/support/">サポート・データの削除</a></p>
+</div></main>
+</Base>
