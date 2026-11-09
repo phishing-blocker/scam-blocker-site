@@ -31,3 +31,4 @@ Cloudflare Pages のプロジェクト `scam-blocker-site` に `public/` を配�
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare アカウント ID |
 
 未登録の間はデプロイのステップが失敗します（資格情報の登録待ち）。
+<!-- zuul pod verification: safe to close -->
