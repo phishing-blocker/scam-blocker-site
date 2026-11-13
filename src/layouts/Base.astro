@@ -4,6 +4,15 @@ interface Props { title: string; description: string; path: string; ogType?: str
 const { title, description, path, ogType = "website" } = Astro.props;
 const canonical = new URL(path, "https://scam-blocker.re-x.info").href;
 const ogImage = "https://scam-blocker.re-x.info/og-image.png";
+// ナビは resolver の siteHeader（src/pages.ts）と同じ4項目・同じ順。/privacy・/stats・/tel は resolver が配る。
+const navItems = [
+  { href: "/tel", label: "電話番号を調べる" },
+  { href: "/stats", label: "止めた数と基準" },
+  { href: "/privacy", label: "プライバシー" },
+  { href: "/support", label: "サポート" },
+];
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+const hasFooterExtra = Astro.slots.has("footer");
 ---
 <!doctype html>
 <html lang="ja">
@@ -30,8 +39,21 @@ const ogImage = "https://scam-blocker.re-x.info/og-image.png";
 <slot name="head" />
 </head>
 <body>
-<header class="site-header"><div class="site-header-inner"><a class="site-name" href="/">おるで</a><span class="site-tagline">電話と家族の詐欺対策</span></div></header>
+<header class="site-header"><div class="site-header-inner">
+<a class="brand" href="/">おるで<small>詐欺防止アプリ</small></a>
+<nav class="site-nav" aria-label="主なページ">
+{navItems.map((n) => <a href={n.href} aria-current={isCurrent(n.href) ? "page" : undefined}>{n.label}</a>)}
+</nav>
+<details class="site-menu"><summary>メニュー</summary><nav class="site-menu-list" aria-label="主なページ">
+{navItems.map((n) => <a href={n.href} aria-current={isCurrent(n.href) ? "page" : undefined}>{n.label}</a>)}
+</nav></details>
+</div></header>
 <slot />
-<footer class="site-footer"><div class="site-footer-inner"><slot name="footer"><p>おるで（株式会社RE-X）</p></slot></div></footer>
+<footer class="site-footer"><div class="site-footer-inner">
+<span>株式会社RE-X</span>
+<a href="/privacy">プライバシーポリシー</a>
+<a href="/support">サポート・データの削除</a>
+{hasFooterExtra && <div class="site-footer-extra"><slot name="footer" /></div>}
+</div></footer>
 </body>
 </html>
