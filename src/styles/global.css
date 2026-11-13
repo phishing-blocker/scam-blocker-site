@@ -39,25 +39,27 @@ a { color: var(--primary-text); text-underline-offset: 0.15em; }
 a:focus-visible, summary:focus-visible { outline: 3px solid var(--primary-text); outline-offset: 2px; }
 
 /* ヘッダー（resolver siteHeader と同じ形。スマホは JS なしの details メニュー） */
-.site-header { position: relative; border-bottom: 1px solid var(--border); background: #ffffff; }
+.site-header { border-bottom: 1px solid var(--border); background: #ffffff; }
 .site-header-inner { max-width: 880px; margin: 0 auto; padding: 14px 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; }
 .brand { font-weight: 700; font-size: 1.1rem; color: var(--primary-text); text-decoration: none; }
 .brand small { font-weight: 400; color: var(--muted); font-size: .9rem; margin-left: 8px; }
 .site-nav { display: flex; flex-wrap: wrap; gap: 4px 18px; }
 .site-nav a { color: var(--text); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
 .site-nav a:hover, .site-nav a[aria-current] { border-bottom-color: var(--primary); }
+/* メニュー：resolver #131（src/pages.ts BASE_CSS）と同じ値。開くとヘッダー内で下へ押し広げる */
 .site-menu { display: none; }
-.site-menu > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-weight: 700; }
+.site-menu > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 1rem; background: #ffffff; }
 .site-menu > summary::-webkit-details-marker { display: none; }
-.site-menu > summary::before { content: ""; width: 18px; height: 12px; border-top: 2px solid currentColor; border-bottom: 2px solid currentColor; background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat; }
-.site-menu[open] > summary { background: var(--surface); border-color: var(--primary); }
-.site-menu-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 10; background: #ffffff; border-bottom: 1px solid var(--border); box-shadow: 0 6px 12px rgba(31, 41, 55, .08); padding: 4px 16px 8px; }
-.site-menu-list a { display: block; padding: 12px 4px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); }
-.site-menu-list a:last-child { border-bottom: 0; }
-.site-menu-list a[aria-current] { color: var(--primary-text); font-weight: 700; }
+.site-menu > summary::before { content: ""; width: 16px; height: 12px; background: linear-gradient(var(--text), var(--text)) 0 0 / 100% 2px no-repeat, linear-gradient(var(--text), var(--text)) 0 50% / 100% 2px no-repeat, linear-gradient(var(--text), var(--text)) 0 100% / 100% 2px no-repeat; }
+.site-menu[open] > summary { border-color: var(--primary); color: var(--primary-text); }
+.site-menu-list { display: flex; flex-direction: column; margin-top: 8px; }
+.site-menu-list a { color: var(--text); text-decoration: none; padding: 12px 4px; border-top: 1px solid var(--border); }
+.site-menu-list a[aria-current] { color: var(--primary-text); font-weight: 700; border-left: 3px solid var(--primary); padding-left: 10px; }
 @media (max-width: 640px) {
   .site-nav { display: none; }
   .site-menu { display: block; }
+  .site-menu[open] { flex-basis: 100%; }
+  .site-menu[open] > summary { margin-left: auto; display: flex; width: max-content; }
 }
 
 /* 本文 */
