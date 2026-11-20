@@ -10,6 +10,7 @@
 | `/after-call` | Tips カード「電話のあとの確認に答える」の「詳しく見る」先。モバイル側の `AFTER_CALL_HELP_URL` には `https://scam-blocker.re-x.info/after-call` を入れる | する |
 | `/.well-known/assetlinks.json` | Android App Links 用（パッケージ `info.re_x.scam_blocker`、Play アプリ署名鍵の SHA-256） | する |
 | `/privacy` | プライバシーポリシー | しない（下書きのみ） |
+| `/delete-account/` | アカウントの削除（アプリでの手順・定期購入の解約・削除されるデータと残るデータ・アプリを使えないときの窓口）。Play のデータセーフティの「アカウント削除用 URL」に使う | する |
 
 `/privacy` は下書きを [docs/privacy-draft.md](docs/privacy-draft.md) に置いています。出所と未公開の理由は同ファイルに書いています。確定したら `public/privacy/index.html` を作って公開します。
 
