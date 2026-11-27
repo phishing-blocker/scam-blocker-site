@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | `/` | トップ（サイト名と各ページへのリンク） | する |
 | `/after-call` | Tips カード「電話のあとの確認に答える」の「詳しく見る」先。モバイル側の `AFTER_CALL_HELP_URL` には `https://scam-blocker.re-x.info/after-call` を入れる | する |
-| `/.well-known/assetlinks.json` | Android App Links 用（パッケージ `info.re_x.scam_blocker`。SHA-256 は正本3件＝Play アプリ署名鍵・アップロード鍵・デバッグ鍵、2026-10-30 確定） | する |
+| `/.well-known/assetlinks.json` | Android App Links 用（パッケージ `info.re_x.scam_blocker`。SHA-256 は Play アプリ署名鍵・アップロード鍵の2件。debug.keystore の指紋は本番に入れない。雛形に同梱の公開鍵で、誰が署名した同名パッケージでも検証が通るため。debug ビルドの App Links は検証環境 `scam-blocker-lab.re-x.info` を使う） | する |
 | `/privacy` | プライバシーポリシー | しない（下書きのみ） |
 | `/fonts/*.ttf` | アプリ「おるで」のセリフ用フォント（Reggae One／Dela Gothic One／Mochiy Pop One。いずれも SIL Open Font License 1.1）。ライセンス文は `/fonts/licenses/OFL-*.txt` に同梱。モバイル側の `DIALOGUE_FONT_SOURCES` が参照する | する |
 | `/delete-account/` | アカウントの削除（アプリでの手順・定期購入の解約・削除されるデータと残るデータ・アプリを使えないときの窓口）。Play のデータセーフティの「アカウント削除用 URL」に使う | する |
